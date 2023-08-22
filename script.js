@@ -1,7 +1,7 @@
 const gameField = document.getElementById('game-field');
 
 
-let objects = ['👨🏻','🧔🏻‍','👨🏼','🌲','🍄','🍎','🏠'];
+let objects = ['👨🏻','🧔🏻‍','👨🏼','🌳','🌳','🌲','🌲','🌾','🌾','🍄','🍎','🏠'];
 
 let field = [];
 
@@ -33,6 +33,9 @@ function generateField() {
 	}
 
 	playerSpawn();
+	npcSpawn();
+	npcSpawn();
+	npcSpawn();
 }
 
 function randomTile() {
@@ -40,7 +43,7 @@ function randomTile() {
 }
 
 function randomObject() {
-	return Math.floor((Math.random() * 3) + 3)
+	return Math.floor((Math.random() * 8) + 3)
 }
 
 function playerSpawn() {
@@ -54,7 +57,23 @@ function playerSpawn() {
 	player = document.getElementById('player-object');
 	player.addEventListener('mousedown', handleMouseDown);
 
-	field[6][6].innerText = objects[6];
+	field[6][6].innerText = objects[11];
+}
+
+function npcSpawn() {
+
+	let tempRow = Math.floor((Math.random() * rows));
+	let tempCol = Math.floor((Math.random() * cols));
+	let tempIndexOfNpc = Math.floor((Math.random() * 2) + 1);
+
+	console.log(tempRow, tempCol, tempIndexOfNpc);
+
+	let isPermit = tempRow != 0 && tempRow != rows - 1 && tempCol != 0 && tempCol != cols - 1;
+	console.log(isPermit, tempRow, tempCol, tempIndexOfNpc);
+
+	if (isPermit) {
+		field[tempRow][tempCol].innerText = objects[tempIndexOfNpc];
+	}
 }
 
 function handleMouseDown() {

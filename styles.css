@@ -6,8 +6,6 @@ body {
     background-color: #FAF1E4;
 }
 
-
-
 #game-field {
     display: flex;
     flex-wrap: wrap;
