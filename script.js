@@ -136,6 +136,7 @@ btnAction.addEventListener('click', function() {
 		isActive = true;
 	} else {
 		actionsPanel.classList.add('hide');
+		eventDisplay.classList.add('hide');
 		btnAction.textContent = "Action";
 		isWalkable = true;
 		isActive = false;
@@ -148,7 +149,7 @@ btnLook.addEventListener('click', function() {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
 		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You see ${tempValue}.`;
+		eventText.innerHTML = `You see ${tempValue}`;
 	}
 });
 
@@ -158,7 +159,7 @@ btnUse.addEventListener('click', function() {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
 		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You can touch this ${tempValue}.`;
+		eventText.innerHTML = `You can touch this ${tempValue}`;
 	}
 });
 
@@ -168,7 +169,7 @@ btnTalk.addEventListener('click', function() {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
 		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You say this ${tempValue} hello.`;
+		eventText.innerHTML = `You say 'Hello!' to this ${tempValue}`;
 	}
 });
 
@@ -178,7 +179,7 @@ btnWalkOut.addEventListener('click', function() {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
 		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You can't walk away from this zone.`;
+		eventText.innerHTML = `You can't walk away from this zone!`;
 	}
 });
 

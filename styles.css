@@ -6,6 +6,10 @@ body {
     background-color: #FAF1E4;
 }
 
+.title {
+    text-align: center;
+}
+
 #game-field {
     display: flex;
     flex-wrap: wrap;
@@ -40,12 +44,33 @@ body {
     cursor: pointer;
 }
 
-.marker {
-    
-}
-
 .hide {
     display: none;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    /* background-color: #CEDEBD; */
+    margin: 10px auto 0;
+}
+
+#btn-action {
+    width: 100px;
+    margin-bottom: 10px;
+    padding: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.btn {
+    width: 95px;
+    padding: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
 #event-display {
@@ -57,4 +82,43 @@ body {
     height: 200px;
     background-color: #718953;
     border-radius: 10px;
+    border: 2px solid #1e1d1b
+    
+}
+
+#event-display-close {
+    position: absolute;
+    left: 270px;
+    width: 30px;
+    height: 30px;
+    background-color: #71895300;
+    border: none;
+    cursor: pointer;
+}
+
+#event-img1 {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    font-size: 70px;
+
+}
+
+#event-img2 {
+    position: absolute;
+    top: 30px;
+    left: 185px;
+    font-size: 70px;
+}
+
+#event-text {
+    position: relative;
+    display: flex;
+    top: 150px;
+    justify-content: center;
+    text-transform: uppercase;
+    padding: 0 20px;
+    text-align: center;
+    font-weight: bold;
+    
 }
