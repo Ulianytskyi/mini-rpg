@@ -20,11 +20,6 @@ body {
     height: 50px;
     border-radius: 6px;
     margin: 2px;
-    
-}
-
-#game-field div:active {
-    
 }
 
 .bgtile1 {
@@ -46,6 +41,20 @@ body {
 }
 
 .marker {
-    background-image: url(data:image/svg+xml;charset=UTF-8;base64,8J+Msg==);
+    
 }
 
+.hide {
+    display: none;
+}
+
+#event-display {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 32vh;
+    left: 50vw;
+    width: 300px;
+    height: 200px;
+    background-color: #718953;
+    border-radius: 10px;
+}
