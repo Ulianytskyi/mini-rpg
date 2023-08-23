@@ -119,6 +119,9 @@ function playerSpawn() {
 	player.addEventListener('mousedown', handleMouseDown);
 
 	field[6][6].innerText = objects[11];
+	field[6][6].dataset.type = "building";
+	field[6][6].dataset.name = "house";
+
 }
 
 function npcSpawn(npcCount) {
@@ -278,6 +281,8 @@ function checkUsing (tempType) {
 			return `You can take this ${tempName}`;
 		case "mushroom":
 			return `You can kick this ${tempName}`;
+		case "building":
+			return `You want to enter into this ${tempName}. But you can't yet`;
 		default:
 			break;
 	}
