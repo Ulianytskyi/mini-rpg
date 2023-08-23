@@ -19,9 +19,10 @@ let field = [];
 let rows = 7;
 let cols = 7;
 let count = 0;
-let currTile, nextTile, tempTile, player;
+let currTile, nextTile, tempTile, tempType, tempName, player;
 let isActive = false;
 let isWalkable = true;
+let npcCount = 2;
 
 let gameFieldWidth = 54 * cols;
 gameField.style.width = gameFieldWidth + 'px';
@@ -33,10 +34,13 @@ function generateField() {
 		let row = [];
 		for (let j = 0; j < cols; j++) {
 			let tile = document.createElement("div");
+			let object = randomObject();
 			tile.id = "";
 			tile.dataset.coords = i.toString() + "_" + j.toString();
 			tile.classList.add(`bgtile`, `bgtile${randomTile()}`);
-			tile.textContent = objects[randomObject()];
+			
+			generateObject (objects, object, tile);
+
 			tile.addEventListener('mousedown', handleMouseDown);
 			gameField.append(tile);
 			row.push(tile);
@@ -45,9 +49,9 @@ function generateField() {
 	}
 
 	playerSpawn();
-	npcSpawn();
-	npcSpawn();
-	npcSpawn();
+
+	npcSpawn(npcCount);
+	
 }
 
 function randomTile() {
@@ -58,8 +62,53 @@ function randomObject() {
 	return Math.floor((Math.random() * 8) + 3)
 }
 
+function generateObject (objects, object, tile) {
+	switch (object) {
+		case 1:
+			tile.textContent = objects[object];
+			tile.dataset.type = "person";
+			tile.dataset.name = "John";
+			break;
+		case 2:
+			tile.textContent = objects[object];
+			tile.dataset.type = "person";
+			tile.dataset.name = "Bill";
+			break;
+		case 3:
+		case 4:
+			tile.textContent = objects[object];
+			tile.dataset.type = "tree";
+			tile.dataset.name = "oak";
+			break;
+		case 5:
+		case 6:
+			tile.textContent = objects[object];
+			tile.dataset.type = "tree";
+			tile.dataset.name = "spruce";
+			break;
+		case 7:
+		case 8:
+			tile.textContent = objects[object];
+			tile.dataset.type = "crops";
+			tile.dataset.name = "grains";
+			break;
+		case 9:
+			tile.textContent = objects[object];
+			tile.dataset.type = "mushroom";
+			tile.dataset.name = "fly agaric";
+			break;
+		case 10:
+			tile.textContent = objects[object];
+			tile.dataset.type = "food";
+			tile.dataset.name = "apple";
+			break;	
+	} 
+}
+
 function playerSpawn() {
-	tempTile = field[0][0].innerText;
+	tempTile = field[0][0].innerHTML;
+	tempType = field[0][0].dataset.type;
+	tempName = field[0][0].dataset.name; 
 
 	field[0][0].innerText = objects[0];
 	field[0][0].id = "player-object";
@@ -71,13 +120,37 @@ function playerSpawn() {
 	field[6][6].innerText = objects[11];
 }
 
-function npcSpawn() {
-	let tempRow = Math.floor((Math.random() * rows));
-	let tempCol = Math.floor((Math.random() * cols));
-	let tempIndexOfNpc = Math.floor((Math.random() * 2) + 1);
-	let isPermit = tempRow != 0 && tempRow != rows - 1 && tempCol != 0 && tempCol != cols - 1;
-	if (isPermit) {
-		field[tempRow][tempCol].innerText = objects[tempIndexOfNpc];
+function npcSpawn(npcCount) {
+	let npcTypeAndName;
+	for (let i = 1; i < npcCount + 1; i++) {
+		let tempRow = Math.floor((Math.random() * rows));
+		let tempCol = Math.floor((Math.random() * cols));
+
+		npcTypeAndName = generateNpc(i);
+		
+		let isPermit = tempRow > 1 && tempRow < rows - 1  && tempCol > 1 && tempCol < cols - 1;
+
+		console.log(tempRow, tempCol, isPermit);
+
+		if (isPermit) {
+			field[tempRow][tempCol].innerText = npcTypeAndName[0];
+			field[tempRow][tempCol].dataset.type = npcTypeAndName[1];
+			field[tempRow][tempCol].dataset.name = npcTypeAndName[2];
+
+			console.log(field[tempRow][tempCol].innerText);
+		} else {
+			i--;
+		}
+		
+	}
+}
+
+function generateNpc(npcNumber) {
+	switch (npcNumber) {
+		case 1:
+			return [objects[npcNumber], "person", "John"];
+		case 2:
+			return [objects[npcNumber], "person", "Bill"];
 	}
 }
 
@@ -106,31 +179,30 @@ function checkMove() {
 	let moveDown = col1 == col2 && row2 == row1 + 1;
 
 	let isAdjacent = moveLeft || moveRight || moveUp || moveDown;
+
 	if (isAdjacent && isWalkable) {
-		let tempObj1 = field[row1][col1].innerText;
-		let tempObj2 = field[row2][col2].innerText;
+		let tempFirstTile = field[row1][col1].innerText;
 		
 		field[row1][col1].innerText = tempTile;
-		tempTile = tempObj2;
+
+		tempTile = field[row2][col2].innerHTML;
+		tempType = field[row2][col2].dataset.type;
+		tempName = field[row2][col2].dataset.name;
+
 		field[row1][col1].id = "";
 		field[row1][col1].classList.remove("marker");
-		field[row2][col2].innerText = tempObj1;
+		field[row2][col2].innerText = tempFirstTile;
 		field[row2][col2].id = "player-object";
 		field[row2][col2].classList.add("marker");	
 	}
-	takeCurrentTileContent(row1, col1);
 }
 
-function takeCurrentTileContent(row, col) {
-	return tempTile;
-}
 
 // action buttons ----------------------------------------------------------
 
 btnAction.addEventListener('click', function() {
 	if (!isActive) {
 		actionsPanel.classList.remove('hide');
-		
 		btnAction.textContent = "Leave";
 		isWalkable = false;
 		isActive = true;
@@ -144,45 +216,71 @@ btnAction.addEventListener('click', function() {
 });
 
 btnLook.addEventListener('click', function() {
-	if (isActive) {
-		let tempValue = takeCurrentTileContent();
+	if (!isActive) {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You see ${tempValue}`;
+		eventImg2.innerHTML = tempTile;
+		eventText.innerHTML = `You see ${tempType}. <br>It's a ${tempName}`;
+		isWalkable = false;
 	}
 });
 
 btnUse.addEventListener('click', function() {
-	if (isActive) {
-		let tempValue = takeCurrentTileContent();
+	if (!isActive) {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You can touch this ${tempValue}`;
+		eventImg2.innerHTML = tempTile;
+		eventText.innerHTML = checkUsing (tempType);
+		isWalkable = false;
 	}
 });
 
 btnTalk.addEventListener('click', function() {
-	if (isActive) {
-		let tempValue = takeCurrentTileContent();
+	if (!isActive) {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempValue;
-		eventText.innerHTML = `You say 'Hello!' to this ${tempValue}`;
+		eventImg2.innerHTML = tempTile;
+		eventText.innerHTML = checkTalkable (tempType);
+		isWalkable = false;
 	}
 });
 
 btnWalkOut.addEventListener('click', function() {
-	if (isActive) {
-		let tempValue = takeCurrentTileContent();
+	if (!isActive) {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempValue;
+		eventImg2.innerHTML = tempTile;
 		eventText.innerHTML = `You can't walk away from this zone!`;
+		isWalkable = false;
 	}
 });
 
 eventDisplayClose.addEventListener('click', function() {
 	eventDisplay.classList.add('hide');
+	isWalkable = true;
 })
+
+function checkTalkable (tempType) {
+	if (tempType != 'person') {
+		return `You can't talk with ${tempName}`;
+	} else {
+		return `You say 'hello' to ${tempName}`;
+	}
+}
+
+function checkUsing (tempType) {
+	switch (tempType) {
+		case "person":
+			return `You can wave your hand to ${tempName}`;
+		case "tree":
+			return `You can try to climb this ${tempName}`;
+		case "crops":
+			return `You can pluck this ${tempName}`;
+		case "food":
+			return `You can take this ${tempName}`;
+		case "mushroom":
+			return `You can kick this ${tempName}`;
+		default:
+			break;
+	}
+}
