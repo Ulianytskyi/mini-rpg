@@ -19,7 +19,7 @@ let field = [];
 let rows = 7;
 let cols = 7;
 let count = 0;
-let currTile, nextTile, tempTile, tempType, tempName, player;
+let currTile, nextTile, tempTile, tempType, tempName, article, player;
 let isActive = false;
 let isWalkable = true;
 let npcCount = 2;
@@ -109,6 +109,7 @@ function playerSpawn() {
 	tempTile = field[0][0].innerHTML;
 	tempType = field[0][0].dataset.type;
 	tempName = field[0][0].dataset.name; 
+	article = checkArticle(tempName[0]);
 
 	field[0][0].innerText = objects[0];
 	field[0][0].id = "player-object";
@@ -130,14 +131,10 @@ function npcSpawn(npcCount) {
 		
 		let isPermit = tempRow > 1 && tempRow < rows - 1  && tempCol > 1 && tempCol < cols - 1;
 
-		console.log(tempRow, tempCol, isPermit);
-
 		if (isPermit) {
 			field[tempRow][tempCol].innerText = npcTypeAndName[0];
 			field[tempRow][tempCol].dataset.type = npcTypeAndName[1];
 			field[tempRow][tempCol].dataset.name = npcTypeAndName[2];
-
-			console.log(field[tempRow][tempCol].innerText);
 		} else {
 			i--;
 		}
@@ -188,7 +185,8 @@ function checkMove() {
 		tempTile = field[row2][col2].innerHTML;
 		tempType = field[row2][col2].dataset.type;
 		tempName = field[row2][col2].dataset.name;
-
+		article = checkArticle(tempName[0]);
+		
 		field[row1][col1].id = "";
 		field[row1][col1].classList.remove("marker");
 		field[row2][col2].innerText = tempFirstTile;
@@ -220,7 +218,7 @@ btnLook.addEventListener('click', function() {
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
 		eventImg2.innerHTML = tempTile;
-		eventText.innerHTML = `You see ${tempType}. <br>It's a ${tempName}`;
+		eventText.innerHTML = checkPerson (tempType);
 		isWalkable = false;
 	}
 });
@@ -282,5 +280,21 @@ function checkUsing (tempType) {
 			return `You can kick this ${tempName}`;
 		default:
 			break;
+	}
+}
+
+function checkPerson (tempType) {
+	if (tempType != 'person') {
+		return `You see ${tempType}. <br>It's ${article} ${tempName}`;
+	} else {
+		return `You see ${tempType}. <br>It's ${tempName}`;
+	}
+}
+
+function checkArticle(letter) {
+	if (letter == 'a' || letter == 'o') {
+		return 'an';
+	} else {
+		return 'a';
 	}
 }
