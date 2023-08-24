@@ -6,6 +6,8 @@ const eventImg1 = document.getElementById('event-img1');
 const eventImg2 = document.getElementById('event-img2');
 const eventText = document.getElementById('event-text');
 
+const logText = document.getElementById('log-text');
+
 const actionsPanel = document.querySelector('.actions-panel');
 const btnAction = document.getElementById('btn-action');
 const btnLook = document.getElementById('btn-look');
@@ -131,7 +133,7 @@ function playerSpawn() {
 	field[6][6].dataset.type = "building";
 	field[6][6].dataset.name = "house";
 
-	
+	logText.innerHTML = checkPerson(tempType);
 	checkInventory();
 }
 
@@ -172,6 +174,7 @@ function handleMouseDown() {
 	currTile = document.getElementById('player-object');
 	nextTile = this;
 	checkMove();
+	checkVision();
 	checkInventory();
 }
 
@@ -232,21 +235,30 @@ btnAction.addEventListener('click', function () {
 	}
 });
 
+function checkVision() {
+	logText.innerHTML = checkPerson(tempType);
+	eventText.innerHTML = checkPerson(tempType);
+	if (nextTile.dataset.type != 'empty' && tempType != 'empty') {
+
+		eventText.innerHTML = checkPerson(tempType);
+		logText.innerHTML = checkPerson(tempType);
+
+	} else {
+		eventText.innerHTML = checkUsing(nextTile.dataset.type);
+		logText.innerHTML = checkUsing(nextTile.dataset.type)
+	}
+
+}
+
 btnLook.addEventListener('click', function () {
 	if (!isActive) {
 		
 		eventDisplay.classList.remove('hide');
 		eventImg1.innerHTML = objects[0];
 		eventImg2.innerHTML = tempTile;
-
-		eventText.innerHTML = checkPerson(tempType);
-		if (nextTile.dataset.type != 'empty' && tempType != 'empty') {
-
-			eventText.innerHTML = checkPerson(tempType);
-
-		} else {
-			eventText.innerHTML = checkUsing(nextTile.dataset.type);
-		}
+		
+		checkVision ();
+		
 		isWalkable = false;
 	}
 });
@@ -297,7 +309,8 @@ function checkTaking() {
 				nextTile.dataset.name = 'empty';
 				tempTile = '';
 				eventImg2.innerHTML = tempTile;
-				eventText.innerHTML = `You took this ${tempName}`
+				eventText.innerHTML = `You took this ${tempName}`;
+				checkVision();
 				checkInventory();
 				count = 1;
 				 
@@ -396,3 +409,20 @@ function checkArticle(letter) {
 		return 'a';
 	}
 }
+
+// log-text -----------------------------------------------------
+
+
+
+// temp ----------------------------------------------------------
+
+
+// const timer = document.getElementById('timer');
+// let sec = 10;
+// let myTimer = setInterval (() => {
+// 	timer.innerHTML = sec--;
+// 	if (sec < 0) {
+// 		clearInterval(myTimer);
+// 		timer.innerHTML = '';
+// 	}
+// }, 1000);
