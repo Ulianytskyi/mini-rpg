@@ -58,12 +58,19 @@ body {
     margin: 10px auto 0;
     padding: 10px;
     width: 378px;
+    height: 36px;
     border-radius: 10px;
-    background-color: grey;
+    /* background-color: grey; */
 }
 
+#log-img {
+    position: absolute;
+    font-size: 30px;
+    margin-top: -5px;
+    
+}
 #log-text {
-    /* color: whitesmoke; */
+    margin-left: 48px;
 }
 
 .controls {
@@ -76,89 +83,45 @@ body {
     margin: 10px auto 0;
 }
 
-#btn-action {
-    width: 100px;
-    height: 20px;
+#btn-stats-tab,
+#btn-actions-tab,
+#btn-inventory-tab {
+    width: 128px;
+    height: 35px;
     margin-bottom: 10px;
     padding: 10px;
     text-transform: uppercase;
     font-weight: bold;
+    border: none;
 }
 
 .btn {
-    width: 95px;
-    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 89px;
+    height: 60px;
     padding: 8px;
     text-transform: uppercase;
     font-weight: bold;
+    border-radius: 4px;
 }
 
-#btn-take-this {
-    background-color: #ffffff00;
-    border: none;
-    text-align: center;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 16px;
-    cursor: pointer;
-    color: aliceblue;
-    padding: 0 5px;
+.btn-no-active {
+    background-color: #b2b2b2
 }
 
-#inventory-block {
-    margin: 10px auto 0;
-    padding: 10px;
-    width: 200px;
-    border-radius: 10px;
-    background-color: grey;
-}
-
-#event-display {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    top: 32vh;
-    left: 50vw;
-    width: 300px;
-    height: 200px;
-    background-color: #718953;
-    border-radius: 10px;
-    border: 2px solid #1e1d1b
-    
-}
-
-#event-display-close {
-    position: absolute;
-    left: 270px;
-    width: 30px;
-    height: 30px;
-    background-color: #71895300;
-    border: none;
-    cursor: pointer;
-}
-
-#event-img1 {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    font-size: 70px;
-
-}
-
-#event-img2 {
-    position: absolute;
-    top: 30px;
-    left: 185px;
-    font-size: 70px;
-}
-
-#event-text {
+.actions-panel,
+.stats-panel,
+.inventory-panel {
     position: relative;
-    display: flex;
-    top: 150px;
-    justify-content: center;
-    text-transform: uppercase;
-    padding: 0 20px;
-    text-align: center;
-    font-weight: bold;
+    transform: translate(-50%, -50%);
+    top: 29px;
+    left: 50%;
+    padding: 10px;
+    width: 373px;
+    height: 60px;
+    background-color: #efefef;
+    
     
 }

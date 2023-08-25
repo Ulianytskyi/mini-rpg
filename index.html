@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Demo Game: Explorer, vr.1.5</title>
+	<title>Demo Game: Explorer, vr.2.1</title>
 	  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨🏻</text></svg>">
 
 	<link rel="stylesheet" href="./styles.css">
@@ -12,33 +12,48 @@
 </head>
 <body>
 	
-	<h2 class="title">Demo Game: Explorer, vr.1.5</h2>
+	<h2 class="title">Demo Game: Explorer, vr.2.1</h2>
 
 	<div id="game-field"></div>
 
-	<div id="event-display" class="hide">
-		<button id="event-display-close">✖️</button>
-		<div id="event-img1"></div>
-		<div id="event-img2"></div>
-		<div id="event-text">
-			<!-- <button id="btn-take-this" class="hide">take</button> -->
-		</div>
-	</div>
-
 	<div id="log-block">
+		<div id="log-img">👨🏻</div>
 		<div id="log-text">Lorem ipsum dolor sit amet.</div>
+		
 	</div>
 	<div class="controls">
-		<button id="btn-action" class="hide">Action</button>
-		<div class="actions-panel">
-			<button id="btn-look" class="btn">Look</button>
-			<button id="btn-use" class="btn">Use</button>
-			<button id="btn-talk" class="btn">Talk</button>
-			<button id="btn-walk-out" class="btn">Walk out</button>
+
+		<div class="tabs-button">
+			<button id="btn-stats-tab" class="">Stats</button>
+			<button id="btn-actions-tab" class="">Actions</button>
+			<button id="btn-inventory-tab" class="">Inventory</button>
+		</div>
+
+		<div class="panels">
+
+			<div class="stats-panel hide">
+				<div id="stats-field">
+					Lorem ipsum dolor sit amet<br>
+					consectetur adipisicing elit.<br>
+					Debitis, consectetur?
+				</div>
+			</div>
+
+			<div class="actions-panel">
+				<button id="btn-look" class="btn" disabled>Look</button>
+				<button id="btn-use" class="btn">Use</button>
+				<button id="btn-talk" class="btn" disabled>Talk</button>
+				<button id="btn-walk-out" class="btn" disabled>Run</button>
+			</div>
+
+			<div class="inventory-panel hide">
+				<div id="inventory-field"></div>
+			</div>
+
 		</div>
 
 	</div>
-	<div id="inventory-block"></div>
+	
 	<div id="timer"></div>
 
 	<script src="./script.js"></script>

@@ -1,21 +1,23 @@
 const gameField = document.getElementById('game-field');
 
-const eventDisplay = document.getElementById('event-display');
-const eventDisplayClose = document.getElementById('event-display-close');
-const eventImg1 = document.getElementById('event-img1');
-const eventImg2 = document.getElementById('event-img2');
-const eventText = document.getElementById('event-text');
-
+const logImg = document.getElementById('log-img');
 const logText = document.getElementById('log-text');
 
+const btnStatsTab = document.getElementById('btn-stats-tab');
+const btnActionsTab = document.getElementById('btn-actions-tab');
+const btnInventoryTab = document.getElementById('btn-inventory-tab');
+
+const statsPanel = document.querySelector('.stats-panel');
 const actionsPanel = document.querySelector('.actions-panel');
-const btnAction = document.getElementById('btn-action');
+const inventoryPanel = document.querySelector('.inventory-panel');
+
 const btnLook = document.getElementById('btn-look');
 const btnUse = document.getElementById('btn-use');
 const btnTalk = document.getElementById('btn-talk');
 const btnWalkOut = document.getElementById('btn-walk-out');
 
-const inventoryPanel = document.getElementById('inventory-block');
+const statsField = document.getElementById('stats-field');
+const inventoryField = document.getElementById('inventory-field');
 
 let objects = ['👨🏻', '🧔🏻‍', '👨🏼', '🌳', '🌳', '🌲', '🌲', '🌾', '🌾', '🍄', '🍎', '🏠'];
 let field = [];
@@ -27,10 +29,11 @@ let rows = 7;
 let cols = 7;
 let count = 0;
 let currTile, nextTile, tempTile, tempType, tempName, article, player;
-let isActive = false;
-let isWalkable = true;
+let isStatsActive = false;
+let isActionsActive = false;
+let isInventoryActive = false;
+
 let npcCount = 2;
-let btnIdTakeThis = 'btn-take-this';
 let canTake = true;
 let isTaken = false;
 
@@ -117,6 +120,7 @@ function generateObject(objects, object, tile) {
 }
 
 function playerSpawn() {
+	nextTile = field[0][0];
 	tempTile = field[0][0].innerHTML;
 	tempType = field[0][0].dataset.type;
 	tempName = field[0][0].dataset.name;
@@ -133,8 +137,10 @@ function playerSpawn() {
 	field[6][6].dataset.type = "building";
 	field[6][6].dataset.name = "house";
 
+	logImg.innerHTML = tempTile;
 	logText.innerHTML = checkPerson(tempType);
 	checkInventory();
+	checkUsing(tempType);
 }
 
 function npcSpawn(npcCount) {
@@ -173,12 +179,14 @@ generateField();
 function handleMouseDown() {
 	currTile = document.getElementById('player-object');
 	nextTile = this;
+
 	checkMove();
 	checkVision();
 	checkInventory();
 }
 
 function checkMove() {
+	// checkUsing(tempType);
 	let firstCoords = currTile.dataset.coords.split("_");
 	let row1 = parseInt(firstCoords[0]);
 	let col1 = parseInt(firstCoords[1]);
@@ -194,7 +202,7 @@ function checkMove() {
 
 	let isAdjacent = moveLeft || moveRight || moveUp || moveDown;
 
-	if (isAdjacent && isWalkable) {
+	if (isAdjacent) {
 		let tempFirstTile = field[row1][col1].innerText;
 
 		field[row1][col1].innerText = tempTile;
@@ -209,6 +217,7 @@ function checkMove() {
 		field[row2][col2].innerText = tempFirstTile;
 		field[row2][col2].id = "player-object";
 		field[row2][col2].classList.add("marker");
+		checkUsing(tempType);
 	}
 }
 
@@ -218,150 +227,180 @@ function checkInventory() {
 	inventoryPanel.innerHTML = `${objects[10]} ${invApple.length}<br>${objects[7]} ${invGrains.length}`;
 }
 
-// action buttons ----------------------------------------------------------
+// tabs buttons ----------------------------------------------------------
 
-btnAction.addEventListener('click', function () {
-	if (!isActive) {
-		actionsPanel.classList.remove('hide');
-		btnAction.textContent = "Leave";
-		isWalkable = false;
-		isActive = true;
-	} else {
+btnStatsTab.classList.add('btn-no-active');
+btnActionsTab.classList.remove('btn-no-active');
+btnInventoryTab.classList.add('btn-no-active');
+
+btnStatsTab.addEventListener('click', function () {
+	if (!isStatsActive) {
+		statsPanel.classList.remove('hide');
 		actionsPanel.classList.add('hide');
-		eventDisplay.classList.add('hide');
-		btnAction.textContent = "Action";
-		isWalkable = true;
-		isActive = false;
+		inventoryPanel.classList.add('hide');
+
+		btnStatsTab.classList.remove('btn-no-active');
+		btnActionsTab.classList.add('btn-no-active');
+		btnInventoryTab.classList.add('btn-no-active');
+
+		isStatsActive = true;
+		isActionsActive = false;
+		isInventoryActive = false;
 	}
 });
 
+btnActionsTab.addEventListener('click', function () {
+	if (!isActionsActive) {
+		statsPanel.classList.add('hide');
+		actionsPanel.classList.remove('hide');
+		inventoryPanel.classList.add('hide');
+
+		btnStatsTab.classList.add('btn-no-active');
+		btnActionsTab.classList.remove('btn-no-active');
+		btnInventoryTab.classList.add('btn-no-active');
+
+		isStatsActive = false;
+		isActionsActive = true;
+		isInventoryActive = false;
+	}
+});
+
+btnInventoryTab.addEventListener('click', function () {
+	if (!isInventoryActive) {
+		statsPanel.classList.add('hide');
+		inventoryPanel.classList.remove('hide');
+		actionsPanel.classList.add('hide');
+
+		btnStatsTab.classList.add('btn-no-active');
+		btnActionsTab.classList.add('btn-no-active');
+		btnInventoryTab.classList.remove('btn-no-active');
+		
+		isStatsActive = false;
+		isActionsActive = false;
+		isInventoryActive = true;
+	}
+});
+
+// log field checking ---------------------------------------------------------
+
 function checkVision() {
+	logImg.innerHTML = tempTile;
 	logText.innerHTML = checkPerson(tempType);
-	eventText.innerHTML = checkPerson(tempType);
+	
 	if (nextTile.dataset.type != 'empty' && tempType != 'empty') {
 
-		eventText.innerHTML = checkPerson(tempType);
 		logText.innerHTML = checkPerson(tempType);
 
 	} else {
-		eventText.innerHTML = checkUsing(nextTile.dataset.type);
+		
 		logText.innerHTML = checkUsing(nextTile.dataset.type)
 	}
 
+	checkUsing(tempType);
+
 }
 
+// actions buttons ----------------------------------------------------------
+
 btnLook.addEventListener('click', function () {
-	if (!isActive) {
-		
-		eventDisplay.classList.remove('hide');
-		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempTile;
-		
-		checkVision ();
-		
-		isWalkable = false;
+	if (isActionsActive) {
+		console.log('button LOOK disabled');
 	}
 });
 
 btnUse.addEventListener('click', function () {
-	if (!isActive) {
-		
-		eventDisplay.classList.remove('hide');
-		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempTile;
+					
+	if (nextTile.dataset.type != 'empty') {
 
-		eventText.innerHTML = checkUsing(tempType);
-		if (nextTile.dataset.type != 'empty') {
-			eventText.innerHTML = checkUsing(tempType);
-
-			if (nextTile.dataset.type == 'food' || nextTile.dataset.type == 'crops') {
-				
-				checkTaking();
-			}
-
-		} else {
-			
-			eventText.innerHTML = checkUsing(nextTile.dataset.type);
+		if (nextTile.dataset.type == 'food' || nextTile.dataset.type == 'crops') {
+			checkTaking();
 		}
-		
-		isWalkable = false;
+	} else {
+		logText.innerHTML = nextTile.innerHTML;
+		checkUsing('empty');
 	}
 });
 
+function checkUsing(tempType) {
+	switch (tempType) {
+		case "person":
+			btnUse.textContent = 'wave';
+			logText.innerHTML += `<br>You can wave your hand to ${tempName}`;
+			break;
+		case "tree":
+			btnUse.textContent = 'climb';
+			logText.innerHTML += `<br>You can try to climb this ${tempName}`;
+			break;
+		case "crops":
+			btnUse.textContent = 'take';
+			logText.innerHTML += `<br>You can take this ${tempName}`;
+			break;
+		case "food":
+			btnUse.textContent = 'take';
+			logText.innerHTML += `<br>You can take this ${tempName}`;
+			break;
+		case "mushroom":
+			btnUse.textContent = 'kick';
+			logText.innerHTML += `<br>You can kick this ${tempName}`;
+			break;
+		case "building":
+			btnUse.textContent = 'enter';
+			logText.innerHTML += `. You want to enter into this ${tempName}. But you can't yet`;
+			break;
+		case "empty":
+			logText.innerHTML = `There is nothing here.<br>It seems that you cleaned this area`;
+			break;
+		default:
+			break;
+	}
+}
+
 function checkTaking() {
-	document.getElementById('btn-take-this').addEventListener('click', function() {
-		console.log('take this', nextTile.dataset.type, nextTile.dataset.name, tempTile);
-		if (
-			nextTile.dataset.type != 'empty' &&
-			nextTile.dataset.name != 'empty' &&
-			tempTile != ''
-			) {
-				
-				if (nextTile.dataset.name == 'apple') {
-					invApple.push(tempTile);
-					inventory[0] = invApple;
-				} else if (nextTile.dataset.name == 'grains') {
-					invGrains.push(tempTile);
-					inventory[1] = invGrains;
-				}
-
-				nextTile.dataset.type = 'empty';
-				nextTile.dataset.name = 'empty';
-				tempTile = '';
-				eventImg2.innerHTML = tempTile;
-				eventText.innerHTML = `You took this ${tempName}`;
-				checkVision();
-				checkInventory();
-				count = 1;
-				 
+	if (
+		nextTile.dataset.type != 'empty' &&
+		nextTile.dataset.name != 'empty' &&
+		tempTile != ''
+		) {
+			
+			if (nextTile.dataset.name == 'apple') {
+				invApple.push(tempTile);
+				inventory[0] = invApple;
+			} else if (nextTile.dataset.name == 'grains') {
+				invGrains.push(tempTile);
+				inventory[1] = invGrains;
 			}
 
-			if (count == 1) {
-				closeTimer(500);
-				count == 0;
-			}
-	});
+			nextTile.dataset.type = 'empty';
+			nextTile.dataset.name = 'empty';
+			tempTile = '🌫';
+			logImg.innerHTML = '🌫';
+			btnUse.textContent = 'idle';
+			logText.innerHTML = `You took this ${tempName}`;
+			// checkVision();
+			checkInventory();		
+	}
 }
 
 btnTalk.addEventListener('click', function () {
-	if (!isActive) {
+	if (isActionsActive) {
 		
-		eventDisplay.classList.remove('hide');
-		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempTile;
+		// logText.innerHTML = checkTalkable(tempType);
+		// if (nextTile.dataset.type != 'empty') {
+		// 	logText.innerHTML = checkTalkable(tempType);
+		// } else {
+		// 	logText.innerHTML = checkTalkable(nextTile.dataset.type);
+		// }
 
-		eventText.innerHTML = checkTalkable(tempType);
-		if (nextTile.dataset.type != 'empty') {
-			eventText.innerHTML = checkTalkable(tempType);
-		} else {
-			eventText.innerHTML = checkTalkable(nextTile.dataset.type);
-		}
-		isWalkable = false;
+		console.log('button TALK disabled');
+
 	}
 });
 
 btnWalkOut.addEventListener('click', function () {
-	if (!isActive) {
-		count = 0;
-		eventDisplay.classList.remove('hide');
-		eventImg1.innerHTML = objects[0];
-		eventImg2.innerHTML = tempTile;
-		eventText.innerHTML = `You can't walk away from this zone!`;
-		isWalkable = false;
+	if (isActionsActive) {
+		console.log('button WALK OUT disabled');
 	}
 });
-
-eventDisplayClose.addEventListener('click', function () {
-	eventDisplay.classList.add('hide');
-	isWalkable = true;
-})
-
-function closeTimer(time) {
-	setTimeout( function () {
-		eventDisplay.classList.add('hide');
-		isWalkable = true;
-	}, time);
-}
 
 function checkTalkable(tempType) {
 	if (tempType == 'empty') {
@@ -373,32 +412,13 @@ function checkTalkable(tempType) {
 	}
 }
 
-function checkUsing(tempType) {
-	switch (tempType) {
-		case "person":
-			return `You can wave your hand to ${tempName}`;
-		case "tree":
-			return `You can try to climb this ${tempName}`;
-		case "crops":
-			return `You can <button id='${btnIdTakeThis}'>pluck</button> this ${tempName}`;
-		case "food":
-			return `You can <button id='${btnIdTakeThis}'>take</button> this ${tempName}`;
-		case "mushroom":
-			return `You can kick this ${tempName}`;
-		case "building":
-			return `You want to enter into this ${tempName}. But you can't yet`;
-		case "empty":
-			return `There is nothing here`;
-		default:
-			break;
-	}
-}
+
 
 function checkPerson(tempType) {
 	if (tempType != 'person') {
-		return `You see ${tempType}. <br>It's ${article} ${tempName}`;
+		return `You see ${tempType}. It's ${article} ${tempName}`;
 	} else {
-		return `You see ${tempType}. <br>It's ${tempName}`;
+		return `You see ${tempType}. It's ${tempName}`;
 	}
 }
 
@@ -409,8 +429,6 @@ function checkArticle(letter) {
 		return 'a';
 	}
 }
-
-// log-text -----------------------------------------------------
 
 
 
