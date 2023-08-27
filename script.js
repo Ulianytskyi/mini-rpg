@@ -32,7 +32,11 @@ let objects = [
   ["🍄", "mushroom", "fly agaric"],
   ["🍎", "fruit", "apple"],
   ["🏠", "building", "house"],
+<<<<<<< Updated upstream
   ["🔑", "key", "first key"]  
+=======
+  ["🔑", "key", "first key"],
+>>>>>>> Stashed changes
 ];
 
 let field = [];
@@ -117,8 +121,12 @@ function playerSpawn() {
   logText.innerHTML = checkPerson(tempType);
   checkInventory();
   checkUsing(tempType);
+<<<<<<< Updated upstream
   makeGoals (field);
 
+=======
+  makeGoals(field);
+>>>>>>> Stashed changes
 }
 
 function npcSpawn(npcCount) {
@@ -128,7 +136,11 @@ function npcSpawn(npcCount) {
 
     let isPermit =
       tempRow > 1 && tempRow < rows - 1 && tempCol > 1 && tempCol < cols - 1;
+<<<<<<< Updated upstream
       let isForest = field[tempRow][tempCol].dataset.type == 'tree';
+=======
+    let isForest = field[tempRow][tempCol].dataset.type == "tree";
+>>>>>>> Stashed changes
 
     if (isPermit && isForest) {
       field[tempRow][tempCol].innerText = objects[i][0]; // npc img
@@ -223,6 +235,7 @@ btnActionsTab.classList.remove("btn-no-active");
 btnInventoryTab.classList.add("btn-no-active");
 
 btnStatsTab.addEventListener("click", function () {
+<<<<<<< Updated upstream
     statsPanel.classList.remove("hide");
     actionsPanel.classList.add("hide");
     inventoryPanel.classList.add("hide");
@@ -250,6 +263,35 @@ btnInventoryTab.addEventListener("click", function () {
     btnStatsTab.classList.add("btn-no-active");
     btnActionsTab.classList.add("btn-no-active");
     btnInventoryTab.classList.remove("btn-no-active");
+=======
+  statsPanel.classList.remove("hide");
+  actionsPanel.classList.add("hide");
+  inventoryPanel.classList.add("hide");
+
+  btnStatsTab.classList.remove("btn-no-active");
+  btnActionsTab.classList.add("btn-no-active");
+  btnInventoryTab.classList.add("btn-no-active");
+});
+
+btnActionsTab.addEventListener("click", function () {
+  statsPanel.classList.add("hide");
+  actionsPanel.classList.remove("hide");
+  inventoryPanel.classList.add("hide");
+
+  btnStatsTab.classList.add("btn-no-active");
+  btnActionsTab.classList.remove("btn-no-active");
+  btnInventoryTab.classList.add("btn-no-active");
+});
+
+btnInventoryTab.addEventListener("click", function () {
+  statsPanel.classList.add("hide");
+  inventoryPanel.classList.remove("hide");
+  actionsPanel.classList.add("hide");
+
+  btnStatsTab.classList.add("btn-no-active");
+  btnActionsTab.classList.add("btn-no-active");
+  btnInventoryTab.classList.remove("btn-no-active");
+>>>>>>> Stashed changes
 });
 
 // log field checking ---------------------------------------------------------
@@ -267,15 +309,24 @@ function checkVision() {
   checkUsing(tempType);
 }
 
+<<<<<<< Updated upstream
 function makeGoals (array) {
   for (const items of array ) {
+=======
+function makeGoals(array) {
+  for (const items of array) {
+>>>>>>> Stashed changes
     for (const item of items) {
       if (item.dataset.name == objects[8][2]) {
         goalGrains++;
       } else if (item.dataset.name == objects[10][2]) {
         goalApple++;
       }
+<<<<<<< Updated upstream
     }  
+=======
+    }
+>>>>>>> Stashed changes
   }
 }
 
@@ -312,11 +363,18 @@ btnUse.addEventListener("click", function () {
     } else if (atHome && !lockedOne && !lockedTwo) {
       logText.innerHTML = `WELCOME HOME!<br>🎉🎉🎉🎉🎉🎉`;
 
+<<<<<<< Updated upstream
       setTimeout( function() {
         gameOver();
       }, 2000);
       
     } else {
+=======
+      setTimeout(function () {
+        gameOver();
+      }, 2000);
+    } else if (atHome) {
+>>>>>>> Stashed changes
       if (firstKey && secondKey) {
         logText.innerHTML = `You have both keys. <br> You can open the locks`;
       } else if (firstKey && !secondKey) {
@@ -324,7 +382,11 @@ btnUse.addEventListener("click", function () {
       } else if (!firstKey && secondKey) {
         logText.innerHTML = `You have second key. <br>But you need first one. Find Bill`;
       } else
+<<<<<<< Updated upstream
       logText.innerHTML = `You want to enter, but you must find two keys. <br>John and Bill can help you`;
+=======
+        logText.innerHTML = `You want to enter, but you must find two keys. <br>John and Bill can help you`;
+>>>>>>> Stashed changes
     }
   } else {
     logText.innerHTML = nextTile.innerHTML;
@@ -392,6 +454,7 @@ function checkTaking() {
 }
 
 btnTalk.addEventListener("click", function () {
+<<<<<<< Updated upstream
 
   let tempGoal;
 
@@ -443,6 +506,42 @@ btnTalk.addEventListener("click", function () {
     }
     
   
+=======
+  let tempGoal;
+
+  if (nextTile.dataset.name == objects[1][2]) {
+    tempGoal = "grains";
+  } else if (nextTile.dataset.name == objects[2][2]) {
+    tempGoal = "apples";
+  }
+
+  logText.innerHTML = `You need the keys. I have one. But I need all the ${tempGoal}`;
+
+  if (firstKey && secondKey) {
+    logText.innerHTML = `You have two key. <br>Now you can open your house`;
+  } else if (nextTile.dataset.name == objects[2][2]) {
+    if (!firstKey && goalApple == invApple.length) {
+      firstKey = true;
+      logText.innerHTML = `Keep this key. <br>But you need another. Find John`;
+      checkInventory();
+    } else if (firstKey && !secondKey) {
+      logText.innerHTML = `You already have one. <br>But you need another. Find John`;
+    } else if (!firstKey && secondKey) {
+      logText.innerHTML = `I see you have one key. <br>But you need another. Find my ${tempGoal}`;
+    }
+  } else if (nextTile.dataset.name == objects[1][2]) {
+    if (!secondKey && goalGrains == invGrains.length) {
+      secondKey = true;
+      logText.innerHTML = `Keep this key. <br>But you need another. Find Bill`;
+      checkInventory();
+    } else if (!firstKey && secondKey) {
+      logText.innerHTML = `You already have one. <br>But you need another. Find Bill`;
+    } else if (firstKey && !secondKey) {
+      logText.innerHTML = `I see you have one key. <br>But you need another. Find my ${tempGoal}`;
+    }
+  }
+
+>>>>>>> Stashed changes
   tempGoal = "";
 });
 
@@ -479,8 +578,16 @@ function checkAtHome() {
 }
 
 function gameOver() {
+<<<<<<< Updated upstream
   btnUse.textContent = 'Restart';
   btnUse.addEventListener('click', function() {
     location.reload();
   });
 }
+=======
+  btnUse.textContent = "Restart";
+  btnUse.addEventListener("click", function () {
+    location.reload();
+  });
+}
+>>>>>>> Stashed changes
