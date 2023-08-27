@@ -20,20 +20,19 @@ const statsField = document.getElementById("stats-field");
 const inventoryField = document.getElementById("inventory-field");
 
 let objects = [
-  [(objImg = "👨🏻"), (objType = "person"), (objName = "Player")],
-  [(objImg = "🧔🏻‍"), (objType = "person"), (objName = "John")],
-  [(objImg = "👨🏼"), (objType = "person"), (objName = "Bill")],
-  [(objImg = "🌳"), (objType = "tree"), (objName = "oak")],
-  [(objImg = "🌳"), (objType = "tree"), (objName = "oak")],
-  [(objImg = "🌲"), (objType = "tree"), (objName = "spruce")],
-  [(objImg = "🌲"), (objType = "tree"), (objName = "spruce")],
-  [(objImg = "🌾"), (objType = "crops"), (objName = "grains")],
-  [(objImg = "🌾"), (objType = "crops"), (objName = "grains")],
-  [(objImg = "🍄"), (objType = "mushroom"), (objName = "fly agaric")],
-  [(objImg = "🍎"), (objType = "fruit"), (objName = "apple")],
-  [(objImg = "🏠"), (objType = "building"), (objName = "house")],
-  [(objImg = "🔑"), (objType = "key"), (objName = "first key")],
-  [(objImg = "🗝"), (objType = "key"), (objName = "second key")],
+  ["👨🏻", "person", "Player"],
+  ["🧔🏻‍", "person", "John"],
+  ["👨🏼", "person", "Bill"],
+  ["🌳", "tree", "oak"],
+  ["🌳", "tree", "oak"],
+  ["🌲", "tree", "spruce"],
+  ["🌲", "tree", "spruce"],
+  ["🌲", "tree", "spruce"],
+  ["🌾", "crops", "grains"],
+  ["🍄", "mushroom", "fly agaric"],
+  ["🍎", "fruit", "apple"],
+  ["🏠", "building", "house"],
+  ["🔑", "key", "first key"]  
 ];
 
 let field = [];
@@ -47,9 +46,7 @@ let rows = 7;
 let cols = 7;
 let count = 0;
 let currTile, nextTile, tempTile, tempType, tempName, article, player;
-let isStatsActive = false;
-let isActionsActive = false;
-let isInventoryActive = false;
+let atHome = false;
 let firstKey = false;
 let secondKey = false;
 let lockedOne = true;
@@ -74,16 +71,10 @@ function generateField() {
       tile.dataset.coords = i.toString() + "_" + j.toString();
       tile.classList.add(`bgtile`, `bgtile${randomTile()}`);
 
-      if (object == 7 || object == 8) {
-        goalGrains++;
-      } else if (object == 10) {
-        goalApple++;
-      }
-
       tile.textContent = objects[object][0];
       tile.dataset.type = objects[object][1];
       tile.dataset.name = objects[object][2];
-
+      
       tile.addEventListener("mousedown", handleMouseDown);
       gameField.append(tile);
       row.push(tile);
@@ -91,11 +82,9 @@ function generateField() {
     field.push(row);
   }
 
-  console.log(goalApple, goalGrains);
-
   playerSpawn();
-
   npcSpawn(npcCount);
+  
 }
 
 function randomTile() {
@@ -128,6 +117,8 @@ function playerSpawn() {
   logText.innerHTML = checkPerson(tempType);
   checkInventory();
   checkUsing(tempType);
+  makeGoals (field);
+
 }
 
 function npcSpawn(npcCount) {
@@ -137,8 +128,9 @@ function npcSpawn(npcCount) {
 
     let isPermit =
       tempRow > 1 && tempRow < rows - 1 && tempCol > 1 && tempCol < cols - 1;
+      let isForest = field[tempRow][tempCol].dataset.type == 'tree';
 
-    if (isPermit) {
+    if (isPermit && isForest) {
       field[tempRow][tempCol].innerText = objects[i][0]; // npc img
       field[tempRow][tempCol].dataset.type = objects[i][1]; // npc type
       field[tempRow][tempCol].dataset.name = objects[i][2]; // npc name
@@ -159,6 +151,7 @@ function handleMouseDown() {
   checkMove();
   checkVision();
   checkInventory();
+  checkAtHome();
 }
 
 function checkMove() {
@@ -204,7 +197,9 @@ function checkMove() {
 
 function checkInventory() {
   let invTemp1 = `${objects[10][0]} ${invApple.length}`;
-  let invTemp2 = `<br>${objects[7][0]} ${invGrains.length}`;
+
+  let invTemp2 = `<br>${objects[8][0]} ${invGrains.length}`;
+
   if (firstKey && secondKey) {
     btnLockOne.disabled = false;
     btnLockTwo.disabled = false;
@@ -217,16 +212,8 @@ function checkInventory() {
     btnLockTwo.disabled = false;
     invTemp2 = `<br>${objects[12][0]} you have second key`;
   }
-  inventoryPanel.innerHTML = invTemp1 + invTemp2;
-}
 
-function checkGoal() {
-  if (goalApple == invApple.length) {
-    firstKey = true;
-  }
-  if (goalGrains == invGrains.length) {
-    secondKey = true;
-  }
+  inventoryPanel.innerHTML = invTemp1 + invTemp2;
 }
 
 // tabs buttons ----------------------------------------------------------
@@ -236,7 +223,6 @@ btnActionsTab.classList.remove("btn-no-active");
 btnInventoryTab.classList.add("btn-no-active");
 
 btnStatsTab.addEventListener("click", function () {
-  if (!isStatsActive) {
     statsPanel.classList.remove("hide");
     actionsPanel.classList.add("hide");
     inventoryPanel.classList.add("hide");
@@ -244,15 +230,9 @@ btnStatsTab.addEventListener("click", function () {
     btnStatsTab.classList.remove("btn-no-active");
     btnActionsTab.classList.add("btn-no-active");
     btnInventoryTab.classList.add("btn-no-active");
-
-    isStatsActive = true;
-    isActionsActive = false;
-    isInventoryActive = false;
-  }
 });
 
 btnActionsTab.addEventListener("click", function () {
-  if (!isActionsActive) {
     statsPanel.classList.add("hide");
     actionsPanel.classList.remove("hide");
     inventoryPanel.classList.add("hide");
@@ -260,15 +240,9 @@ btnActionsTab.addEventListener("click", function () {
     btnStatsTab.classList.add("btn-no-active");
     btnActionsTab.classList.remove("btn-no-active");
     btnInventoryTab.classList.add("btn-no-active");
-
-    isStatsActive = false;
-    isActionsActive = true;
-    isInventoryActive = false;
-  }
 });
 
 btnInventoryTab.addEventListener("click", function () {
-  if (!isInventoryActive) {
     statsPanel.classList.add("hide");
     inventoryPanel.classList.remove("hide");
     actionsPanel.classList.add("hide");
@@ -276,11 +250,6 @@ btnInventoryTab.addEventListener("click", function () {
     btnStatsTab.classList.add("btn-no-active");
     btnActionsTab.classList.add("btn-no-active");
     btnInventoryTab.classList.remove("btn-no-active");
-
-    isStatsActive = false;
-    isActionsActive = false;
-    isInventoryActive = true;
-  }
 });
 
 // log field checking ---------------------------------------------------------
@@ -298,18 +267,37 @@ function checkVision() {
   checkUsing(tempType);
 }
 
+function makeGoals (array) {
+  for (const items of array ) {
+    for (const item of items) {
+      if (item.dataset.name == objects[8][2]) {
+        goalGrains++;
+      } else if (item.dataset.name == objects[10][2]) {
+        goalApple++;
+      }
+    }  
+  }
+}
+
 // actions buttons ----------------------------------------------------------
 
 btnLockOne.addEventListener("click", function () {
-  if (isActionsActive) {
-    console.log("button LOOK disabled");
+  if (atHome) {
+    lockedOne = false;
+    btnLockOne.textContent = "unlocked";
+  }
+});
+
+btnLockTwo.addEventListener("click", function () {
+  if (atHome) {
+    lockedTwo = false;
+    btnLockTwo.textContent = "unlocked";
   }
 });
 
 btnUse.addEventListener("click", function () {
   if (nextTile.dataset.type != "empty") {
     if (
-      nextTile.dataset.type == objects[7][1] ||
       nextTile.dataset.type == objects[8][1] ||
       nextTile.dataset.type == objects[10][1]
     ) {
@@ -321,7 +309,21 @@ btnUse.addEventListener("click", function () {
       nextTile.dataset.type == objects[2][1]
     ) {
       btnTalk.disabled = false;
-    } else if (nextTile.dataset.type == objects[11][1]) {
+    } else if (atHome && !lockedOne && !lockedTwo) {
+      logText.innerHTML = `WELCOME HOME!<br>🎉🎉🎉🎉🎉🎉`;
+
+      setTimeout( function() {
+        gameOver();
+      }, 2000);
+      
+    } else {
+      if (firstKey && secondKey) {
+        logText.innerHTML = `You have both keys. <br> You can open the locks`;
+      } else if (firstKey && !secondKey) {
+        logText.innerHTML = `You have first key. <br>But you need second one. Find John`;
+      } else if (!firstKey && secondKey) {
+        logText.innerHTML = `You have second key. <br>But you need first one. Find Bill`;
+      } else
       logText.innerHTML = `You want to enter, but you must find two keys. <br>John and Bill can help you`;
     }
   } else {
@@ -370,18 +372,18 @@ function checkTaking() {
     nextTile.dataset.name != "empty" &&
     tempTile != ""
   ) {
-    if (nextTile.dataset.name == "apple") {
+    if (nextTile.dataset.name == objects[10][2]) {
       invApple.push(tempTile);
       inventory[0] = invApple;
-    } else if (nextTile.dataset.name == "grains") {
+    } else if (nextTile.dataset.name == objects[8][2]) {
       invGrains.push(tempTile);
       inventory[1] = invGrains;
     }
 
     nextTile.dataset.type = "empty";
     nextTile.dataset.name = "empty";
-    tempTile = "🌫";
-    logImg.innerHTML = "🌫";
+    tempTile = "❕";
+    logImg.innerHTML = "❕";
     btnUse.textContent = "idle";
     logText.innerHTML = `You took this ${tempName}`;
 
@@ -390,24 +392,58 @@ function checkTaking() {
 }
 
 btnTalk.addEventListener("click", function () {
-  let tempGoal;
-  if (!isActionsActive) {
-    if (nextTile.dataset.name == objects[1][2]) {
-      // check John
-      tempGoal = "grains";
-    } else if (nextTile.dataset.name == objects[2][2]) {
-      // check Bill
-      tempGoal = "apples";
-    }
-    logText.innerHTML = `You need a key. I have this one. But I need all ${tempGoal}`;
-  }
-  tempGoal = "";
-});
 
-btnLockTwo.addEventListener("click", function () {
-  if (isActionsActive) {
-    console.log("button WALK OUT disabled");
-  }
+  let tempGoal;
+
+    if (nextTile.dataset.name == objects[1][2]) {tempGoal = "grains";} 
+    else if (nextTile.dataset.name == objects[2][2]) {tempGoal = "apples";}
+
+    logText.innerHTML = `You need the keys. I have one. But I need all the ${tempGoal}`;
+
+    if (firstKey && secondKey) {
+
+      logText.innerHTML = `You have two key. <br>Now you can open your house`;
+
+    } else if (nextTile.dataset.name == objects[2][2]) {
+
+      if (!firstKey && goalApple == invApple.length) {
+
+        firstKey = true;
+        logText.innerHTML = `Keep this key. <br>But you need another. Find John`;
+        checkInventory();
+
+      } else if (firstKey && !secondKey) {
+
+        logText.innerHTML = `You already have one. <br>But you need another. Find John`;
+
+      } else if (!firstKey && secondKey) {
+
+        logText.innerHTML = `I see you have one key. <br>But you need another. Find my ${tempGoal}`;
+
+      }
+
+    } else if (nextTile.dataset.name == objects[1][2]) {
+
+      if (!secondKey && goalGrains == invGrains.length) {
+
+        secondKey = true;
+        logText.innerHTML = `Keep this key. <br>But you need another. Find Bill`;
+        checkInventory();
+
+      } else if (!firstKey && secondKey) {
+
+        logText.innerHTML = `You already have one. <br>But you need another. Find Bill`;
+
+      } else if (firstKey && !secondKey) {
+
+        logText.innerHTML = `I see you have one key. <br>But you need another. Find my ${tempGoal}`;
+
+      }
+
+    }
+    
+  
+  tempGoal = "";
 });
 
 function checkTalkable(tempType) {
@@ -434,4 +470,17 @@ function checkArticle(letter) {
   } else {
     return "a";
   }
+}
+
+function checkAtHome() {
+  if (nextTile.dataset.type == objects[11][1]) {
+    atHome = true;
+  }
+}
+
+function gameOver() {
+  btnUse.textContent = 'Restart';
+  btnUse.addEventListener('click', function() {
+    location.reload();
+  });
 }
